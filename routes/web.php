@@ -11,14 +11,13 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Auth::routes();
+Route::get('/', 'InstanciaController@index');
+Route::get('/home', 'InstanciaController@index');
 
-Route::get('/home', 'HomeController@index')->name('home');
-
+//INSTÂNCIA CRUD
+Route::post('/instancias/excluir_instancia', 'InstanciaController@excluir_instancia');
+Route::get('/instancias/listar_instancias', 'InstanciaController@listar_instancias');
 Route::resources([
 	'/instancias' => 'InstanciaController',
 	'/admin'	 => 'AdminController'
