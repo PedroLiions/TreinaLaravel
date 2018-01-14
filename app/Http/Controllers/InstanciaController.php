@@ -84,13 +84,21 @@ class InstanciaController extends Controller
     public function update(Request $request, $id)
     {
 
-        // $product = Product::findOrFail($id);
-        $product->name        = $request->name;
-        $product->description = $request->description;
-        $product->quantity    = $request->quantity;
-        $product->price       = $request->price;
-        $product->save();
-        return redirect()->route('products.index')->with('message', 'Product updated successfully!');
+        $validatedData = $request->validate([
+            'nome' => 'required|max:255',
+            'email' => 'required',
+        ]);
+
+        // store
+        $instancia = Instancia::find($id);
+        $instancia->nome        = $request->nome;
+        $instancia->email       = $request->email;
+        $instancia->mensalidade = $request->mensalidade;
+        $instancia->telefone    = $request->telefone;
+        $instancia->save();
+
+        echo json_encode(['status' => true, 'instancia' => $instancia]);
+
     }
 
     /**

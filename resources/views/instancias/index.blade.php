@@ -6,7 +6,7 @@
     <div class="row">
         <div class="col-md-12 row">
             <div class="col-md-2 form-group">
-                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modal_instancia">Adicionar</button>
+                <button type="button" class="btn btn-success" data-toggle="modal" onclick="create_instancia();">Adicionar</button>
             </div>
             <div class="col-md-2">
           </div>
@@ -65,7 +65,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn btn-primary" onclick="create_instancia()" data-dismiss="modal">Salvar</button>
+        <button type="button" class="btn btn-primary" id="modal_instancia_salvar" data-dismiss="modal">Salvar</button>
       </div>
     </div>
   </div>
@@ -110,6 +110,17 @@
   }
 
   function create_instancia() {
+
+    $('#nome').val('');
+    $('#email').val('');
+    $('#mensalidade').val('');
+    $('#telefone').val('');
+
+    $('#modal_instancia_salvar').attr('onclick', 'create_instancia_ajax()');
+    $('#modal_instancia').modal('show');
+  }
+
+  function create_instancia_ajax() {
 
     $.ajax({
       url: '/instancias',
@@ -206,14 +217,15 @@
     $('#mensalidade').val(instancia_editar.mensalidade);
     $('#telefone').val(instancia_editar.telefone);
 
+    $('#modal_instancia_salvar').attr('onclick', 'update_instancia_ajax(' + id_instancia + ')');
     $('#modal_instancia').modal('show');
   }
 
-  function update_instancia_ajax() {
+  function update_instancia_ajax(id_instancia) {
 
     $.ajax({
-      url: '/instancias',
-      method: 'POST',
+      url: '/instancias/' + id_instancia,
+      method: 'PUT',
       dataType: 'json',
       async: false,
       data: {
@@ -224,18 +236,9 @@
         'telefone': $('#telefone').val()
       },
       success: function(retorno) {
-        var instancia = 
-          {
-            id: retorno.id,
-            nome: $('#nome').val(), 
-            email: $('#email').val(), 
-            telefone: $('#telefone').val(), 
-            mensalidade: $('#mensalidade').val()
-          };
-
-        adicionar_tabela(instancia);
-
-        swal("Instância cadastrada!", '', "success")
+        $('#table #instancia' + id_instancia).remove();
+        adicionar_tabela(retorno.instancia);
+        swal("Instância editada!", '', "success");
       }
     });
 
